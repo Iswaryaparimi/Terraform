@@ -1,0 +1,19 @@
+==================
+Terraform (IAAC s/w)
+==================
+
+-> Terraform is an open source s/w created by HashiCorp and written in Go programming language
+
+-> Terraform is an infrastructure as code (IaaC) software tool, 
+
+-> Infrastructure as code is the process of managing infrastructure in a file or files rather than manually configuring resources using user interface (UI)
+
+-> In Terraform resources are nothing but Virtual machines, Elastic IPs, Security Groups, Network interfaces, RDS, LBR etc..
+
+-> Terraform code is written in the HashiCorp Configuration langauge (HCL) in files with the extension .tf
+
+-> Terraform allows users to use HashiCorp Configuration Language (HCL) to create the files containing definitions of the their desired resources
+
+-> Terraform Supports all most all cloud providers (AWS, AZURE, GCP, Openstack etc..)
+
+-> To automate infrastructure creation in cloud platforms we will use Terraform.
