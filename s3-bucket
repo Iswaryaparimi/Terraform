@@ -1,0 +1,45 @@
+#s3-bucket-creation:
+provider "aws" {
+  region = "us-east-1" 
+}
+
+resource "aws_s3_bucket" "my_bucket" {
+  bucket = "sree"  # Replace with a globally unique bucket name
+  acl    = "private"  # Access Control List, e.g., "private", "public-read", "public-read-write"
+
+  versioning {
+    enabled = true  
+  }
+
+  server_side_encryption_configuration {
+    rule {
+      apply_server_side_encryption_by_default {
+        sse_algorithm = "AES256"  # Use AES256 for server-side encryption
+      }
+    }
+  }
+
+  logging {
+    target_bucket = aws_s3_bucket.my_bucket.bucket  # Log files will be stored in the same bucket
+    target_prefix = "logs/"
+  }
+
+  lifecycle_rule {
+    enabled = true
+
+    # Transition objects to the STANDARD storage class after 60 days
+    transition {
+      days          = 60
+      storage_class = "STANDARD"
+    }
+
+    # Expire objects after 60 days
+    expiration {
+      days = 60
+    }
+  }
+
+  tags = {
+    Name        = "sree"
+    Environment = "DEV"
+  }
