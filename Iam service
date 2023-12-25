@@ -1,0 +1,85 @@
+#Iam Policy (s3-read-access)
+provider "aws" {
+  region = "us-east-1"  # Set your desired AWS region
+}
+
+data "aws_iam_policy_document" "s3_read_access_document" {
+  source_json = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:Get*",
+        "s3:List*"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_policy" "s3_read_access_policy" {
+  name        = "s3_read_access_policy"
+  description = "Example IAM policy for S3 read-only access"
+  policy      = data.s3_read_access_document.s3_read_access_policy.json
+}
+
+#=======================================================================================================
+# Iam Role 
+provider "aws" {
+  region = "us-east-1"  # Update with your desired AWS region
+}
+
+resource "aws_iam_role" "test_role" {
+  name = "test-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Principal = {
+          Service = "ec2.amazonaws.com"  # Update with the service that assumes this role
+        }
+      }
+    ]
+  })
+}
+
+# You can attach policies to the IAM role as needed
+resource "aws_iam_role_policy_attachment" "test_attachment" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"  # Update with the desired policy ARN
+  role       = aws_iam_role.test_role.name
+}
+
+#===============================================================================================================================================
+# Iam user and group
+provider "aws" {
+  region = "us-east-1"  # Update with your desired AWS region
+}
+
+# Create an IAM group
+resource "aws_iam_group" "new_group" {
+  name = "new-group"
+}
+
+# Create an IAM user
+resource "aws_iam_user" "new_user" {
+  name = "new-user"
+}
+
+# Add the IAM user to the IAM group
+resource "aws_iam_user_group_membership" "new_membership" {
+  user  = aws_iam_user.new_user.name
+  groups = [aws_iam_group.new_group.name]
+}
+
+# Attach a policy to the IAM group
+resource "aws_iam_group_policy_attachment" "new_policy_attachment" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"  # Update with the desired policy ARN
+  group      = aws_iam_group.new_group.name
+}
